@@ -1,14 +1,42 @@
 <template>
-  <button class="button-group__button button-group__button_active" type="button" aria-selected="false">Button</button>
+  <button
+    class="button-group__button"
+    :class="{ 'button-group__button_active': isActive }"
+    type="button"
+    :aria-selected="isActive"
+    @click.stop="activate"
+  >
+    <slot />
+  </button>
 </template>
 
 <script>
+import UiButtonGroup from './UiButtonGroup.vue';
+
 export default {
   name: 'UiButtonGroupItem',
 
   props: {
     value: {
       required: true,
+    },
+  },
+
+  computed: {
+    isActive() {
+      return this.$parent.activeValue === this.value;
+    },
+  },
+
+  beforeCreate() {
+    if (this.$parent.$options.name !== UiButtonGroup.name) {
+      console.warn(`${this.$options.name} must be used as direct child content of ${UiButtonGroup.name}`);
+    }
+  },
+
+  methods: {
+    activate() {
+      this.$parent.updateActiveValue(this.value);
     },
   },
 };
